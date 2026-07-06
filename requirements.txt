@@ -1,0 +1,11 @@
+flask==3.0.3
+flask-jwt-extended==4.6.0
+flask-limiter==3.8.0
+flask-cors==4.0.1
+pydantic==2.8.2
+google-genai==0.2.0
+python-dotenv==1.0.1
+pytest==8.3.2
+werkzeug==3.0.3
+flasgger==0.9.7.1
+gunicorn==22.0.0

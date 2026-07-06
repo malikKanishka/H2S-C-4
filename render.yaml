@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: fanpulse
+    runtime: python
+    plan: free
+    branch: main                      # change if your default branch differs
+    buildCommand: "pip install -r requirements.txt && python -c \"from database import initDb; initDb(seed=True)\""
+    startCommand: "gunicorn \"app:createApp()\" --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true           # Render auto-generates a random secret
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://fanpulse.onrender.com"   # update to your actual Render URL once assigned
+      - key: DB_PATH
+        value: "fanpulse.db"          # ephemeral on free tier -- see notes in DEPLOY_RENDER.md
+      - key: GEMINI_API_KEY           # required by genai_service.py -- get one from Google AI Studio
+        sync: false                   # sync:false = set manually in dashboard
+      - key: GEMINI_MODEL
+        value: "gemini-2.5-flash"     # optional -- this is genai_service.py's own default
+      - key: DEMO_FAN_PASS
+        sync: false
+      - key: DEMO_VOLUNTEER_PASS
+        sync: false
+      - key: DEMO_ORGANIZER_PASS
+        sync: false
+
+# NOTE ON PERSISTENCE:
+# Render's free web service plan has no persistent disk, so fanpulse.db
+# resets on every redeploy and likely on every spin-down/wake cycle.
+# The buildCommand above re-seeds the DB automatically on each build so the
+# demo accounts and mock data always exist after a deploy.
+# If you need data to survive between user sessions (not just deploys),
+# move to Fly.io (free persistent volume) or PythonAnywhere (free persistent disk)
+# instead -- your existing sqlite3 code works unchanged there.

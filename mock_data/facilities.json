@@ -1,0 +1,17 @@
+[
+  {
+    "zoneId": "zone-a",
+    "facilityType": "restroom_accessible",
+    "description": "Accessible restroom near Gate 1"
+  },
+  {
+    "zoneId": "zone-a",
+    "facilityType": "refill_station",
+    "description": "Water refill station next to merchandise stand"
+  },
+  {
+    "zoneId": "zone-b",
+    "facilityType": "sensory_room",
+    "description": "Quiet sensory room located on the second concourse"
+  }
+]

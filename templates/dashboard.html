@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FanPulse — Operations Dashboard</title>
+  <meta name="description" content="FanPulse real-time operations dashboard for FIFA World Cup 2026 — live crowd density, alerts, and sustainability metrics.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+
+  <!-- ========== Navbar ========== -->
+  <nav class="navbar">
+    <a class="nav-brand" href="#">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="13" stroke="url(#ng)" stroke-width="2"/>
+          <path d="M10 16 C10 11 16 8 16 8 C16 8 22 11 22 16 C22 21 16 24 16 24 C16 24 10 21 10 16Z" fill="url(#ng)" opacity="0.9"/>
+          <defs>
+            <linearGradient id="ng" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#7b5ea7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div class="nav-title">FanPulse</div>
+        <div class="nav-subtitle">Operations Dashboard · FIFA WC 2026</div>
+      </div>
+    </a>
+
+    <div class="nav-right">
+      <span class="live-dot">Live</span>
+      <span class="nav-clock" id="nav-clock">--:--:--</span>
+      <button class="btn-logout" id="btn-logout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <h1>Stadium Operations</h1>
+      <p id="last-updated" style="color:var(--c-muted);font-size:0.8rem;">Loading…</p>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">Total Fans</div>
+          <div class="stat-value" id="stat-fans">—</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">Zones at Risk</div>
+          <div class="stat-value" id="stat-risk">—</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+            <line x1="6" y1="1" x2="6" y2="4"/>
+            <line x1="10" y1="1" x2="10" y2="4"/>
+            <line x1="14" y1="1" x2="14" y2="4"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">Active Alerts</div>
+          <div class="stat-value" id="stat-alerts">—</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a10 10 0 1 0 10 10"/>
+            <path d="M12 6v6l4 2"/>
+            <path d="M22 2L12 12"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">Eco Points</div>
+          <div class="stat-value" id="stat-points">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Insights -->
+    <div class="insights-card">
+      <div class="insights-header">
+        <div class="insights-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          AI Operational Insights
+        </div>
+        <button class="btn-refresh" id="btn-refresh">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+      <ul id="insights-list">
+        <li><div class="skeleton" style="width:75%"></div></li>
+        <li><div class="skeleton" style="width:60%"></div></li>
+        <li><div class="skeleton" style="width:68%"></div></li>
+      </ul>
+    </div>
+
+    <!-- Zone Status + Alerts -->
+    <div class="dashboard-grid">
+
+      <!-- Zone Status -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Zone Density</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-muted)" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <div class="panel-body">
+          <div class="zone-list" id="zones-list">
+            <div class="skeleton" style="height:48px"></div>
+            <div class="skeleton" style="height:48px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Alerts -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Alerts</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-muted)" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <div class="panel-body">
+          <div class="alerts-list" id="alerts-list">
+            <div class="skeleton" style="height:54px"></div>
+            <div class="skeleton" style="height:54px"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Broadcast Alert Form (organizer only) -->
+    <div class="panel broadcast-panel" style="margin-bottom:24px">
+      <div class="panel-header">
+        <span class="panel-title">Broadcast Alert</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-muted)" stroke-width="2">
+          <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+        </svg>
+      </div>
+      <div class="panel-body">
+        <form id="broadcast-form" novalidate>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="alert-zone">Target Zone</label>
+              <select id="alert-zone">
+                <option value="">Loading zones…</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="alert-message">Alert Message</label>
+              <textarea id="alert-message" placeholder="e.g. Divert Gate 3 crowd to Gate 5 immediately…"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-broadcast" id="btn-broadcast">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+            </svg>
+            Broadcast Alert
+          </button>
+        </form>
+        <div class="broadcast-feedback" id="broadcast-feedback"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Inject token for JS -->
+  <script>window.AUTH_TOKEN = "{{ token }}";</script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

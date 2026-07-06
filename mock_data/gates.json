@@ -1,0 +1,20 @@
+[
+  {
+    "id": "gate-1",
+    "zoneId": "zone-a",
+    "name": "Gate 1 (Main)",
+    "isWheelchairAccessible": true
+  },
+  {
+    "id": "gate-2",
+    "zoneId": "zone-a",
+    "name": "Gate 2",
+    "isWheelchairAccessible": false
+  },
+  {
+    "id": "gate-3",
+    "zoneId": "zone-b",
+    "name": "Gate 3",
+    "isWheelchairAccessible": true
+  }
+]

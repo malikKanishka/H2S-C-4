@@ -1,0 +1,4 @@
+{
+  "username": "organizer_demo",
+  "password": "orgpass123"
+}

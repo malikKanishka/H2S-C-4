@@ -1,0 +1,18 @@
+[
+  {
+    "id": "zone-a",
+    "name": "North Gate / Zone A",
+    "capacity": 5000,
+    "currentCount": 1200,
+    "latitude": 34.0522,
+    "longitude": -118.2437
+  },
+  {
+    "id": "zone-b",
+    "name": "South Gate / Zone B",
+    "capacity": 3000,
+    "currentCount": 2900,
+    "latitude": 34.0525,
+    "longitude": -118.2440
+  }
+]
