@@ -32,9 +32,14 @@ def initDb(seed: bool = False, dbPath: str = None):
         name TEXT NOT NULL,
         capacity INTEGER NOT NULL,
         currentCount INTEGER NOT NULL DEFAULT 0,
-        latitude REAL, longitude REAL
+        latitude REAL, longitude REAL,
+        kickoffIso TEXT DEFAULT '2026-06-11T12:00:00Z'
     );
     """)
+    
+    # Try adding columns if they don't exist
+    try: cursor.execute("ALTER TABLE zones ADD COLUMN kickoffIso TEXT DEFAULT '2026-06-11T12:00:00Z'")
+    except sqlite3.OperationalError: pass
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS gates (
@@ -50,9 +55,19 @@ def initDb(seed: bool = False, dbPath: str = None):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         zoneId TEXT NOT NULL REFERENCES zones(id),
         facilityType TEXT NOT NULL,
-        description TEXT
+        description TEXT,
+        isFullyAccessible BOOLEAN DEFAULT 1,
+        distanceMetersFromNearestGate INTEGER DEFAULT 50,
+        hasTactileGuidance BOOLEAN DEFAULT 0
     );
     """)
+    
+    try: cursor.execute("ALTER TABLE facilities ADD COLUMN isFullyAccessible BOOLEAN DEFAULT 1")
+    except sqlite3.OperationalError: pass
+    try: cursor.execute("ALTER TABLE facilities ADD COLUMN distanceMetersFromNearestGate INTEGER DEFAULT 50")
+    except sqlite3.OperationalError: pass
+    try: cursor.execute("ALTER TABLE facilities ADD COLUMN hasTactileGuidance BOOLEAN DEFAULT 0")
+    except sqlite3.OperationalError: pass
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS alerts (
@@ -123,7 +138,7 @@ def seedData(conn: sqlite3.Connection):
                 cursor.execute("SELECT id FROM zones WHERE id = ?", (z["id"],))
                 if not cursor.fetchone():
                     cursor.execute(
-                        "INSERT INTO zones (id, name, capacity, currentCount, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO zones (id, name, capacity, currentCount, latitude, longitude, kickoffIso) VALUES (?, ?, ?, ?, ?, ?, '2026-06-11T12:00:00Z')",
                         (z["id"], z["name"], z["capacity"], z.get("currentCount", 0), z.get("latitude"), z.get("longitude"))
                     )
 
@@ -147,7 +162,7 @@ def seedData(conn: sqlite3.Connection):
             facilities = json.load(f)
             for fac in facilities:
                 cursor.execute(
-                    "INSERT INTO facilities (zoneId, facilityType, description) VALUES (?, ?, ?)",
+                    "INSERT INTO facilities (zoneId, facilityType, description, isFullyAccessible, distanceMetersFromNearestGate, hasTactileGuidance) VALUES (?, ?, ?, 1, 50, 0)",
                     (fac["zoneId"], fac["facilityType"], fac.get("description", ""))
                 )
 

@@ -10,9 +10,9 @@
   <link rel="stylesheet" href="/static/dashboard.css">
 </head>
 <body>
-
+  <a href="#main" class="skip-link">Skip to main content</a>
   <!-- ========== Navbar ========== -->
-  <nav class="navbar">
+  <nav class="navbar" role="navigation" aria-label="Main Navigation">
     <a class="nav-brand" href="#">
       <div class="nav-logo-icon">
         <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
@@ -47,7 +47,7 @@
   </nav>
 
   <!-- ========== Main Content ========== -->
-  <main class="main-content">
+  <main id="main" class="main-content" role="main">
 
     <!-- Page header -->
     <div class="page-header">
@@ -154,7 +154,7 @@
           </svg>
         </div>
         <div class="panel-body">
-          <div class="zone-list" id="zones-list">
+          <div class="zone-list" id="zones-list" aria-live="polite">
             <div class="skeleton" style="height:48px"></div>
             <div class="skeleton" style="height:48px"></div>
           </div>
@@ -190,6 +190,7 @@
       </div>
       <div class="panel-body">
         <form id="broadcast-form" novalidate>
+          <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
           <div class="form-row">
             <div class="form-field">
               <label for="alert-zone">Target Zone</label>

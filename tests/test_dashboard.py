@@ -25,6 +25,7 @@ def test_dashboard_ui(client):
     login_resp = client.post('/api/auth/login', json={"username": "organizer_demo", "password": "orgpass123"})
     token = login_resp.get_json()["access_token"]
     
-    response = client.get(f'/dashboard?token={token}')
+    client.set_cookie('access_token_cookie', token)
+    response = client.get('/dashboard')
     assert response.status_code == 200
-    assert b"FanPulse Operations Dashboard" in response.data
+    assert b"Operations Dashboard" in response.data

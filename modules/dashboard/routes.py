@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, render_template, request
-from extensions import requireRole
+from flask import Blueprint, jsonify, render_template, request, redirect
+from extensions import requireRole, generate_csrf_token
 from .service import getDashboardSummary
+from flask_jwt_extended import decode_token
 
 dashboard_bp = Blueprint('dashboard', __name__, template_folder='../../templates', static_folder='../../static')
 
@@ -12,40 +13,20 @@ def summary():
     ---
     tags:
       - Dashboard
-    security:
-      - Bearer: []
-    responses:
-      200:
-        description: Dashboard data
-        schema:
-          type: object
-          properties:
-            zones:
-              type: array
-              items:
-                type: object
-            alerts:
-              type: array
-              items:
-                type: object
-            sustainability_totals:
-              type: object
-            insights:
-              type: array
-              items:
-                type: string
-      401:
-        description: Missing or invalid token
-      403:
-        description: Forbidden
     """
     data = getDashboardSummary()
     return jsonify(data), 200
 
 @dashboard_bp.route('/dashboard', methods=['GET'])
 def index():
-    token = request.args.get('token')
+    token = request.cookies.get('access_token_cookie')
     if not token:
-        return "Unauthorized. Please login and provide ?token=", 401
+        return redirect('/api/auth/staff/login')
     
-    return render_template('dashboard.html', token=token)
+    try:
+        # Just ensure it's a valid structure, actual role check happens on API endpoints
+        decoded = decode_token(token)
+    except Exception:
+        return redirect('/api/auth/staff/login')
+        
+    return render_template('dashboard.html', token=token, csrf_token=generate_csrf_token())

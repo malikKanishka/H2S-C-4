@@ -1,21 +1,21 @@
 from flask import Blueprint, request, jsonify
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from extensions import requireRole
-from .service import recommendTransport
+from .service import recommendTransport, getTransportStatus
 
 transport_bp = Blueprint('transport', __name__)
 
 class TransportRequest(BaseModel):
     origin_lat: float
     origin_lng: float
-    kickoff_iso: str
+    kickoff_iso: str = Field(..., max_length=50)
     model_config = {"extra": "forbid"}
 
 @transport_bp.route('/recommend', methods=['POST'])
 @requireRole('fan')
 def recommend():
     """
-    Get transport recommendation
+    Get natural language transport recommendation
     ---
     tags:
       - Transport

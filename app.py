@@ -12,11 +12,11 @@ Tests:
     pytest
 """
 
-from flask import Flask, jsonify, make_response, render_template
+from flask import Flask, jsonify, make_response, render_template, request
 from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 from config import Config
-from extensions import jwt, limiter, closeDb
+from extensions import jwt, limiter, closeDb, setSecurityHeaders, FanPulseError, ValidationFailedError, NotFoundError, GenAIUnavailableError
 from flasgger import Swagger
 
 def createApp(testing=False):
@@ -32,6 +32,10 @@ def createApp(testing=False):
     CORS(app, origins=app.config["CORS_ALLOWED_ORIGINS"])
     jwt.init_app(app)
     limiter.init_app(app)
+
+    @app.after_request
+    def apply_caching(response):
+        return setSecurityHeaders(response)
 
     # Configure Swagger UI with JWT Support
     app.config['SWAGGER'] = {
@@ -68,11 +72,19 @@ def createApp(testing=False):
     # Global Error Handler
     @app.errorhandler(Exception)
     def handleException(e):
+        if isinstance(e, ValidationFailedError):
+            return jsonify({"error": "validation_failed", "message": "One of the fields you sent wasn't in the right format. Please check and try again.", "details": getattr(e, 'details', [])}), 400
+        if isinstance(e, NotFoundError):
+            return jsonify({"error": "not_found", "message": e.message}), 404
+        if isinstance(e, GenAIUnavailableError):
+            return jsonify({"error": "ai_unavailable", "message": "Our AI service is temporarily down. Please try again in a few moments."}), 503
+        
         # Pass through HTTP exceptions (404, 405, etc.) with their proper status codes
         if isinstance(e, HTTPException):
-            return jsonify({"error": e.name, "message": e.description}), e.code
+            return jsonify({"error": e.name, "message": "An error occurred with your request."}), e.code
+        
         app.logger.error(f"Internal Error: {e}")
-        return jsonify({"error": "internal_error"}), 500
+        return jsonify({"error": "internal_error", "message": "We encountered an unexpected issue on our end. Please try again later."}), 500
 
     @app.route("/favicon.ico", methods=["GET"])
     @limiter.exempt
