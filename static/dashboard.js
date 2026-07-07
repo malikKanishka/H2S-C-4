@@ -195,37 +195,56 @@ document.getElementById('broadcast-form')?.addEventListener('submit', async (e) 
   if (!message) { showToast('Please enter an alert message', 'error'); return; }
 
   btn.disabled = true;
-  btn.textContent = 'Broadcasting…';
-  fb.className = 'broadcast-feedback';
+  const feedback = document.getElementById('broadcast-feedback');
+
+  if (!zoneId || !message) {
+    feedback.textContent = 'Please select a zone and enter a message.';
+    feedback.className = 'broadcast-feedback error';
+    feedback.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('btn-broadcast');
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
 
   try {
-    const res = await apiFetch('/api/crowd/alert', {
+    const res = await fetch('/api/crowd/alert', {
       method: 'POST',
-      body: JSON.stringify({ zone_id: zoneId, message })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + TOKEN
+      },
+      body: JSON.stringify({ 
+        zone_id: zoneId, 
+        message: message,
+        csrf_token: CSRF_TOKEN // Include CSRF Token
+      })
     });
-    const body = await res.json();
+
+    const data = await res.json();
     if (res.ok) {
-      fb.className = 'broadcast-feedback success';
-      fb.textContent = `✓ Alert #${body.alert_id} broadcast successfully.`;
+      feedback.textContent = 'Alert broadcasted successfully.';
+      feedback.className = 'broadcast-feedback success';
       document.getElementById('alert-message').value = '';
-      showToast('Alert broadcast!', 'success');
-      setTimeout(() => fetchSummary(), 800);
+      fetchDashboard(); // force refresh
     } else {
-      fb.className = 'broadcast-feedback error';
-      fb.textContent = body.error || 'Broadcast failed.';
+      feedback.textContent = data.message || 'Failed to broadcast alert.';
+      feedback.className = 'broadcast-feedback error';
     }
   } catch (err) {
-    fb.className = 'broadcast-feedback error';
-    fb.textContent = 'Network error. Please try again.';
+    feedback.textContent = 'Network error. Please try again.';
+    feedback.className = 'broadcast-feedback error';
   } finally {
+    feedback.style.display = 'block';
     btn.disabled = false;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg> Broadcast Alert`;
+    btn.style.opacity = '1';
+    setTimeout(() => { feedback.style.display = 'none'; }, 4000);
   }
 });
 
-// ---- Logout ----
+// Logout
 document.getElementById('btn-logout')?.addEventListener('click', () => {
-  window.location.href = '/';
 });
 
 // ---- Init ----

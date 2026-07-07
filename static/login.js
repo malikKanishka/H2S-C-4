@@ -78,9 +78,8 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (res.ok && data.access_token) {
-      const token = data.access_token;
-      // Redirect to dashboard with token
-      window.location.href = `/dashboard?token=${encodeURIComponent(token)}`;
+      // Cookie is set by the server in the response — redirect straight to dashboard
+      window.location.href = '/dashboard';
     } else {
       const msg = data.error === 'invalid_credentials'
         ? 'Invalid username or password.'

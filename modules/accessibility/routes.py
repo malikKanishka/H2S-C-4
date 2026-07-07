@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from extensions import requireRole, limiter
 from .service import planAccessibility
 
@@ -7,7 +7,8 @@ accessibility_bp = Blueprint('accessibility', __name__)
 
 class AccessibilityPlanRequest(BaseModel):
     needs: list[str]
-    destination_zone: str
+    destination_zone: str = Field(..., max_length=50)
+    language: str = Field(None, max_length=50)
     model_config = {"extra": "forbid"}
 
 @accessibility_bp.route('/plan', methods=['POST'])

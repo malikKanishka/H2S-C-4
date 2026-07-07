@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from flask_jwt_extended import get_jwt_identity
 from extensions import requireRole
 from .service import logSustainabilityAction
@@ -7,7 +7,7 @@ from .service import logSustainabilityAction
 sustainability_bp = Blueprint('sustainability', __name__)
 
 class SustainabilityRequest(BaseModel):
-    action_type: str
+    action_type: str = Field(..., max_length=100)
     model_config = {"extra": "forbid"}
 
 @sustainability_bp.route('/log', methods=['POST'])

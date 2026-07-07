@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from typing import Optional
 from flask_jwt_extended import get_jwt_identity
 from extensions import requireRole, limiter
@@ -8,8 +8,8 @@ from .service import askAssistant, logQuery
 assistant_bp = Blueprint('assistant', __name__)
 
 class AskRequest(BaseModel):
-    question: str
-    language: Optional[str] = None
+    question: str = Field(..., max_length=500)
+    language: Optional[str] = Field(None, max_length=50)
     model_config = {"extra": "forbid"}
 
 @assistant_bp.route('/ask', methods=['POST'])
